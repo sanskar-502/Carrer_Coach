@@ -5,9 +5,28 @@ import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+
+export async function testGeminiAPIKey() {
+  try {
+    const testPrompt = "Say hello in a professional tone.";
+    const result = await model.generateContent(testPrompt);
+    const text = result.response.text().trim();
+    console.log("✅ Gemini API Key is working. Sample response:", text);
+    return text;
+  } catch (error) {
+    console.error("❌ Gemini API Key failed:", error.message);
+    throw new Error("Invalid Gemini API key or API access issue.");
+  }
+}
+
+
+
+
 
 export async function generateCoverLetter(data) {
+   await testGeminiAPIKey();
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
