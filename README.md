@@ -226,5 +226,3 @@ If you have any questions or need help, please:
 ---
 
 **Built with ❤️ by Sanskar**
-
-*Empowering careers with AI-driven insights and guidance.* 
