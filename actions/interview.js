@@ -3,47 +3,47 @@
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { checkUser } from "@/lib/checkUser";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 export async function generateQuiz() {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-    select: {
-      industry: true,
-      skills: true,
-    },
-  });
-
-  if (!user) throw new Error("User not found");
-
-  const prompt = `
-    Generate 10 technical interview questions for a ${
-      user.industry
-    } professional${
-    user.skills?.length ? ` with expertise in ${user.skills.join(", ")}` : ""
-  }.
-    
-    Each question should be multiple choice with 4 options.
-    
-    Return the response in this JSON format only, no additional text:
-    {
-      "questions": [
-        {
-          "question": "string",
-          "options": ["string", "string", "string", "string"],
-          "correctAnswer": "string",
-          "explanation": "string"
-        }
-      ]
-    }
-  `;
-
   try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    // Check if required API key exists
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error("GEMINI_API_KEY is not configured");
+    }
+
+    // Use checkUser to ensure user exists in database (creates if new)
+    const user = await checkUser();
+    if (!user) throw new Error("Failed to create or find user");
+
+    const prompt = `
+      Generate 10 technical interview questions for a ${
+        user.industry
+      } professional${
+      user.skills?.length ? ` with expertise in ${user.skills.join(", ")}` : ""
+    }.
+      
+      Each question should be multiple choice with 4 options.
+      
+      Return the response in this JSON format only, no additional text:
+      {
+        "questions": [
+          {
+            "question": "string",
+            "options": ["string", "string", "string", "string"],
+            "correctAnswer": "string",
+            "explanation": "string"
+          }
+        ]
+      }
+    `;
+
     const result = await model.generateContent(prompt);
     const response = result.response;
     const text = response.text();
@@ -53,7 +53,7 @@ export async function generateQuiz() {
     return quiz.questions;
   } catch (error) {
     console.error("Error generating quiz:", error);
-    throw new Error("Failed to generate quiz questions");
+    throw new Error("Failed to generate quiz questions: " + error.message);
   }
 }
 
@@ -61,11 +61,9 @@ export async function saveQuizResult(questions, answers, score) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) throw new Error("User not found");
+  // Use checkUser to ensure user exists in database (creates if new)
+  const user = await checkUser();
+  if (!user) throw new Error("Failed to create or find user");
 
   const questionResults = questions.map((q, index) => ({
     question: q.question,
@@ -132,11 +130,9 @@ export async function getAssessments() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) throw new Error("User not found");
+  // Use checkUser to ensure user exists in database (creates if new)
+  const user = await checkUser();
+  if (!user) throw new Error("Failed to create or find user");
 
   try {
     const assessments = await db.assessment.findMany({

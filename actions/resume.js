@@ -4,6 +4,7 @@ import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { revalidatePath } from "next/cache";
+import { checkUser } from "@/lib/checkUser";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
@@ -12,11 +13,9 @@ export async function saveResume(content) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) throw new Error("User not found");
+  // Use checkUser to ensure user exists in database (creates if new)
+  const user = await checkUser();
+  if (!user) throw new Error("Failed to create or find user");
 
   try {
     const resume = await db.resume.upsert({
@@ -44,11 +43,9 @@ export async function getResume() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) throw new Error("User not found");
+  // Use checkUser to ensure user exists in database (creates if new)
+  const user = await checkUser();
+  if (!user) throw new Error("Failed to create or find user");
 
   return await db.resume.findUnique({
     where: {
@@ -61,17 +58,20 @@ export async function improveWithAI({ current, type }) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
+  // Use checkUser to ensure user exists in database (creates if new)
+  const user = await checkUser();
+  if (!user) throw new Error("Failed to create or find user");
+  
+  // Get user with industry insights for AI improvement
+  const userWithIndustry = await db.user.findUnique({
+    where: { id: user.id },
     include: {
       industryInsight: true,
     },
   });
 
-  if (!user) throw new Error("User not found");
-
   const prompt = `
-    As an expert resume writer, improve the following ${type} description for a ${user.industry} professional.
+    As an expert resume writer, improve the following ${type} description for a ${userWithIndustry?.industry || 'professional'} professional.
     Make it more impactful, quantifiable, and aligned with industry standards.
     Current content: "${current}"
 

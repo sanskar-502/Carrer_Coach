@@ -3,6 +3,7 @@
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { checkUser } from "@/lib/checkUser";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
@@ -40,23 +41,32 @@ export async function getIndustryInsights() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
+  // Use checkUser to ensure user exists in database (creates if new)
+  const user = await checkUser();
+  if (!user) throw new Error("Failed to create or find user");
+  
+  // Get user with industry insights
+  const userWithInsights = await db.user.findUnique({
+    where: { id: user.id },
     include: {
       industryInsight: true,
     },
   });
 
-  if (!user) throw new Error("User not found");
+  // If user doesn't have an industry set, they need to complete onboarding
+  if (!userWithInsights.industry) {
+    throw new Error("User needs to complete onboarding first");
+  }
 
   // If no insights exist, generate them
-  if (!user.industryInsight) {
-    const insights = await generateAIInsights(user.industry);
+  if (!userWithInsights.industryInsight) {
+    const insights = await generateAIInsights(userWithInsights.industry);
 
     const industryInsight = await db.industryInsight.create({
       data: {
-        industry: user.industry,
+        industry: userWithInsights.industry,
         ...insights,
+        lastUpdated: new Date(),
         nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
     });
@@ -64,5 +74,24 @@ export async function getIndustryInsights() {
     return industryInsight;
   }
 
-  return user.industryInsight;
+  // Check if data needs updating (if nextUpdate date has passed)
+  const now = new Date();
+  const nextUpdate = new Date(userWithInsights.industryInsight.nextUpdate);
+  
+  if (now > nextUpdate) {
+    const insights = await generateAIInsights(userWithInsights.industry);
+    
+    const updatedInsight = await db.industryInsight.update({
+      where: { industry: userWithInsights.industry },
+      data: {
+        ...insights,
+        lastUpdated: new Date(),
+        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
+    
+    return updatedInsight;
+  }
+
+  return userWithInsights.industryInsight;
 }

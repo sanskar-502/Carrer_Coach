@@ -116,17 +116,41 @@ export default function ResumeBuilder({ initialContent }) {
     setIsGenerating(true);
     try {
       const element = document.getElementById("resume-pdf");
+      
+      if (!element) {
+        throw new Error("Resume preview element not found. Please refresh the page and try again.");
+      }
+
+      if (typeof html2pdf !== 'function') {
+        throw new Error("PDF library not loaded properly. Please refresh the page and try again.");
+      }
+
+      // Ensure we have content to generate
+      if (!previewContent || previewContent.trim() === '') {
+        throw new Error("No resume content found. Please add some content first.");
+      }
+
       const opt = {
         margin: [15, 15],
-        filename: "resume.pdf",
+        filename: `resume-${user?.fullName?.replace(/\s+/g, '-') || 'user'}.pdf`,
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        html2canvas: { 
+          scale: 2,
+          useCORS: true,
+          letterRendering: true
+        },
+        jsPDF: { 
+          unit: "mm", 
+          format: "a4", 
+          orientation: "portrait" 
+        },
       };
 
       await html2pdf().set(opt).from(element).save();
+      toast.success("PDF generated and downloaded successfully!");
     } catch (error) {
       console.error("PDF generation error:", error);
+      toast.error(error.message || "Failed to generate PDF. Please try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -401,19 +425,24 @@ export default function ResumeBuilder({ initialContent }) {
               preview={resumeMode}
             />
           </div>
-          <div className="hidden">
-            <div id="resume-pdf">
-              <MDEditor.Markdown
-                source={previewContent}
-                style={{
-                  background: "white",
-                  color: "black",
-                }}
-              />
-            </div>
-          </div>
         </TabsContent>
       </Tabs>
+      
+      {/* Hidden PDF element - always available */}
+      <div className="hidden">
+        <div id="resume-pdf">
+          <MDEditor.Markdown
+            source={previewContent}
+            style={{
+              background: "white",
+              color: "black",
+              padding: "20px",
+              fontSize: "14px",
+              lineHeight: "1.6",
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 }

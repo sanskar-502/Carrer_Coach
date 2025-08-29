@@ -1,6 +1,12 @@
 # 🚀 AI Career Catalyst
 
-A comprehensive AI-powered career development platform built with Next.js, designed to help professionals accelerate their career growth through personalized guidance, interview preparation, and smart resume creation.
+An intelligent career development platform powered by AI that helps professionals accelerate their career growth through personalized guidance, smart resume building, and expert interview preparation.
+
+![AI Career Catalyst](https://img.shields.io/badge/AI-Career%20Catalyst-blue?style=for-the-badge&logo=artificial-intelligence)
+![Next.js](https://img.shields.io/badge/Next.js-15.1.4-black?style=for-the-badge&logo=next.js)
+![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?style=for-the-badge&logo=tailwind-css)
 
 
 ## ✨ Features
@@ -34,33 +40,49 @@ A comprehensive AI-powered career development platform built with Next.js, desig
 - Professional tone and structure optimization
 - Multiple format options
 
-## 🛠️ Tech Stack
+## 🏗️ Architecture
 
-### Frontend
-- **Next.js 15** - React framework with App Router
-- **React 19** - UI library
-- **Tailwind CSS** - Utility-first CSS framework
-- **Shadcn/ui** - Beautiful and accessible UI components
-- **Lucide React** - Icon library
-- **React Hook Form** - Form handling
-- **Zod** - Schema validation
+### Tech Stack
+- **Frontend**: Next.js 15.1.4 with React 18 and TypeScript
+- **Styling**: Tailwind CSS with custom components and glass-morphism effects
+- **Authentication**: Clerk for user management and security
+- **Database**: PostgreSQL with Prisma ORM
+- **AI Integration**: Google Gemini 2.5 Flash for content generation
+- **UI Components**: Radix UI primitives with custom styling
+- **Charts**: Recharts for data visualization
+- **PDF Generation**: html2pdf.js for document export
 
-### Backend & Database
-- **Prisma** - Database ORM
-- **PostgreSQL** - Primary database (Neon DB)
-- **Clerk** - Authentication and user management
-- **Inngest** - Background job processing
-
-### AI & External Services
-- **Google Gemini AI** - AI-powered features
-- **React Markdown** - Markdown rendering
-- **Recharts** - Data visualization
-- **HTML2PDF.js** - PDF generation
-
-### Development Tools
-- **ESLint** - Code linting
-- **PostCSS** - CSS processing
-- **Turbopack** - Fast bundling
+### Project Structure
+```
+├── app/                    # Next.js 15 app router
+│   ├── (auth)/            # Authentication pages
+│   ├── (main)/            # Main application pages
+│   ├── globals.css        # Global styles and utilities
+│   └── layout.js          # Root layout
+├── components/            # Reusable UI components
+│   ├── ui/               # Base UI components (buttons, cards, etc.)
+│   ├── header.jsx        # Navigation header
+│   ├── hero.jsx          # Landing page hero section
+│   └── scroll-to-top.jsx # Scroll restoration component
+├── actions/              # Server actions
+│   ├── dashboard.js      # Industry insights and AI generation
+│   ├── resume.js         # Resume management
+│   ├── cover-letter.js   # Cover letter generation
+│   ├── interview.js      # Interview prep and assessments
+│   └── user.js           # User management and onboarding
+├── lib/                  # Utility libraries
+│   ├── prisma.js         # Database client
+│   ├── checkUser.js      # User authentication helper
+│   └── utils.js          # Common utilities
+├── data/                 # Static data files
+│   ├── features.js       # Feature definitions
+│   ├── testimonials.js   # Customer testimonials
+│   ├── faqs.js          # Frequently asked questions
+│   └── howItWorks.js    # Process flow data
+└── prisma/              # Database schema and migrations
+    ├── schema.prisma     # Database schema
+    └── migrations/       # Database migration files
+```
 
 ## 🚀 Getting Started
 
