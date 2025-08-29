@@ -63,13 +63,13 @@ export default function Header() {
           <SignedIn>
             <Link href="/dashboard">
               <Button
-                variant="ghost"
-                className="hidden md:inline-flex items-center gap-2 hover:bg-blue-500/10 hover:text-primary transition-all duration-300"
+                variant="outline"
+                className="hidden md:inline-flex items-center gap-2 border-primary/30 bg-background/50 hover:bg-pink-300/15 hover:border-pink-400 hover:text-pink-600 hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
                 <LayoutDashboard className="h-4 w-4" />
                 Dashboard
               </Button>
-              <Button variant="ghost" className="md:hidden w-10 h-10 p-0 hover:bg-blue-500/10">
+              <Button variant="outline" className="md:hidden w-10 h-10 p-0 border-primary/30 bg-background/50 hover:bg-pink-300/15 hover:border-pink-400 hover:scale-105 transition-all duration-300">
                 <LayoutDashboard className="h-4 w-4" />
               </Button>
             </Link>
@@ -84,10 +84,10 @@ export default function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52 glass-morphism border border-white/20 shadow-2xl">
-                <DropdownMenuItem asChild className="hover:bg-blue-500/10 transition-colors">
+                <DropdownMenuItem asChild className="hover:!bg-pink-300/35 focus:!bg-pink-300/35 hover:!text-current focus:!text-current hover:shadow-xl hover:scale-105 transition-all duration-300">
                   <Link href="/resume" className="flex items-center gap-3 px-4 py-3">
-                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                      <FileText className="h-4 w-4 text-blue-600" />
+                    <div className="w-8 h-8 rounded-lg bg-pink-300/20 flex items-center justify-center">
+                      <FileText className="h-4 w-4 text-pink-600" />
                     </div>
                     <div>
                       <div className="font-medium">Build Resume</div>
@@ -95,13 +95,13 @@ export default function Header() {
                     </div>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="hover:bg-purple-500/10 transition-colors">
+                <DropdownMenuItem asChild className="hover:!bg-pink-300/35 focus:!bg-pink-300/35 hover:!text-current focus:!text-current hover:shadow-xl hover:scale-105 transition-all duration-300">
                   <Link
                     href="/ai-cover-letter"
                     className="flex items-center gap-3 px-4 py-3"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                      <PenBox className="h-4 w-4 text-purple-600" />
+                    <div className="w-8 h-8 rounded-lg bg-pink-300/20 flex items-center justify-center">
+                      <PenBox className="h-4 w-4 text-pink-600" />
                     </div>
                     <div>
                       <div className="font-medium">Cover Letter</div>
@@ -109,10 +109,10 @@ export default function Header() {
                     </div>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="hover:bg-teal-500/10 transition-colors">
+                <DropdownMenuItem asChild className="hover:!bg-pink-300/35 focus:!bg-pink-300/35 hover:!text-current focus:!text-current hover:shadow-xl hover:scale-105 transition-all duration-300">
                   <Link href="/interview" className="flex items-center gap-3 px-4 py-3">
-                    <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center">
-                      <GraduationCap className="h-4 w-4 text-teal-600" />
+                    <div className="w-8 h-8 rounded-lg bg-pink-300/20 flex items-center justify-center">
+                      <GraduationCap className="h-4 w-4 text-pink-600" />
                     </div>
                     <div>
                       <div className="font-medium">Interview Prep</div>
