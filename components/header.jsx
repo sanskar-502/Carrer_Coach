@@ -126,7 +126,7 @@ export default function Header() {
 
           <SignedOut>
             <SignInButton>
-              <Button variant="outline" className="border-primary/20 hover:bg-primary/5 hover:border-primary/40 transition-all duration-300">
+              <Button variant="outline" className="border-primary/30 bg-background/50 hover:bg-pink-300/15 hover:border-pink-400 hover:text-pink-600 hover:shadow-lg transition-all duration-300">
                 Sign In
               </Button>
             </SignInButton>

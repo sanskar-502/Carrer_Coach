@@ -91,7 +91,7 @@ const HeroSection = () => {
               </Button>
             </Link>
             <Link href="#features">
-              <Button variant="outline" size="lg" className="px-8 py-4 text-lg font-semibold glass-card hover:bg-primary/10 hover:scale-105 transition-all duration-300 rounded-xl border-2 border-primary/30">
+              <Button variant="outline" size="lg" className="px-8 py-4 text-lg font-semibold glass-card border-2 border-primary/30 bg-background/50 hover:bg-pink-300/15 hover:border-pink-400 hover:text-pink-600 hover:shadow-xl hover:scale-105 transition-all duration-300 rounded-xl">
                 ✨ Explore Features
               </Button>
             </Link>
