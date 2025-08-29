@@ -2,18 +2,18 @@ export const testimonial = [
   {
     quote:
       "The AI-powered interview prep was a game-changer. Landed my dream job at a top tech company!",
-    author: "Sarah Chen",
-    image: "https://randomuser.me/api/portraits/women/75.jpg",
+    author: "Alok Mishra",
+    image: "https://randomuser.me/api/portraits/men/71.jpg",
     role: "Software Engineer",
-    company: "Tech Giant Co.",
+    company: "Microsoft",
   },
   {
     quote:
       "The industry insights helped me pivot my career successfully. The salary data was spot-on!",
-    author: "Michael Rodriguez",
-    image: "https://randomuser.me/api/portraits/men/75.jpg",
+    author: "Sachin Kumar",
+    image: "https://randomuser.me/api/portraits/men/69.jpg",
     role: "Product Manager",
-    company: "StartUp Inc.",
+    company: "Amazon",
   },
   {
     quote:

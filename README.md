@@ -1,4 +1,4 @@
-# 🚀 AI Career Coach
+# 🚀 AI Career Catalyst
 
 A comprehensive AI-powered career development platform built with Next.js, designed to help professionals accelerate their career growth through personalized guidance, interview preparation, and smart resume creation.
 
