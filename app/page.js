@@ -200,13 +200,9 @@ export default function LandingPage() {
                   <div className="flex flex-col space-y-6">
                     <div className="flex items-center space-x-4">
                       <div className="relative h-14 w-14 flex-shrink-0">
-                        <Image
-                          width={56}
-                          height={56}
-                          src={testimonial.image}
-                          alt={testimonial.author}
-                          className="rounded-full object-cover border-3 border-primary/30 shadow-lg"
-                        />
+                        <div className={`w-14 h-14 rounded-full ${testimonial.bgColor} flex items-center justify-center text-white font-bold text-lg shadow-lg border-3 border-primary/30`}>
+                          {testimonial.initials}
+                        </div>
                         <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400/20 to-purple-400/20"></div>
                       </div>
                       <div className="flex-1 text-left">
