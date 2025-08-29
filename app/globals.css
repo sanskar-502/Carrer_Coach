@@ -130,6 +130,8 @@ body {
   }
   
   .gradient-title {
+    /* Fallback color for when gradients don't load */
+    color: hsl(var(--primary));
     background: var(--gradient-text-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -137,7 +139,27 @@ body {
     @apply font-black tracking-tight;
   }
   
+  /* Fallback for browsers that don't support background-clip */
+  @supports not (-webkit-background-clip: text) {
+    .gradient-title {
+      color: hsl(var(--primary));
+      background: none;
+    }
+    
+    .gradient-text-secondary {
+      color: hsl(var(--primary));
+      background: none;
+    }
+    
+    .gradient-text-accent {
+      color: hsl(var(--accent));
+      background: none;
+    }
+  }
+  
   .gradient-text-secondary {
+    /* Fallback color for when gradients don't load */
+    color: hsl(var(--primary));
     background: var(--gradient-text-secondary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -146,6 +168,8 @@ body {
   }
   
   .gradient-text-accent {
+    /* Fallback color for when gradients don't load */
+    color: hsl(var(--accent));
     background: var(--gradient-accent);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

@@ -162,27 +162,91 @@ ai-career-coach/
 └── hooks/                # Custom React hooks
 ```
 
-## 🎯 Key Features Explained
+## 🗃️ Database Schema
 
-### Dashboard
-- Personalized career insights and recommendations
-- Progress tracking and goal setting
-- Recent activity and performance metrics
+### Core Models
+- **User** - User profiles with industry and skill information
+- **Resume** - Resume content and metadata
+- **CoverLetter** - Generated cover letters with job details
+- **Assessment** - Interview assessment results and feedback
+- **IndustryInsight** - AI-generated market intelligence data
+
+### Key Features
+- **Automatic user creation** from Clerk authentication
+- **Industry-specific insights** with AI-generated content
+- **Progress tracking** with detailed analytics
+- **Secure data isolation** per user
+
+## 🤖 AI Integration
+
+### Google Gemini 2.5 Flash
+- **Resume Enhancement** - Improves resume content with industry-specific optimization
+- **Cover Letter Generation** - Creates personalized cover letters based on job descriptions
+- **Interview Questions** - Generates technical interview questions by industry and skills
+- **Industry Insights** - Provides real-time market analysis and trending skills
+- **Improvement Tips** - Offers personalized feedback based on assessment results
+
+### AI Features
+- Context-aware content generation
+- Industry-specific customization
+- Real-time data processing
+- Intelligent content optimization
+
+## 🎨 UI/UX Design
+
+### Design System
+- **Glass-morphism** effects with backdrop blur
+- **Gradient backgrounds** and text styling
+- **Responsive design** for all device sizes
+- **Smooth animations** and micro-interactions
+- **Dark mode support** with theme switching
+
+### Components
+- Custom UI components built on Radix UI
+- Consistent spacing and typography
+- Accessible form controls and navigation
+- Interactive charts and data visualization
+
+## 🔐 Security & Authentication
+
+### Clerk Integration
+- Enterprise-grade authentication
+- Social login support (Google, GitHub, etc.)
+- Secure session management
+- User profile synchronization
+
+### Data Security
+- Server-side validation for all user inputs
+- Secure API endpoints with authentication checks
+- Database isolation per user
+- Environment variable protection for sensitive data
+
+## 📊 Features Overview
 
 ### Resume Builder
-- AI-powered resume creation with industry-specific optimization
-- ATS scoring and feedback
-- Multiple template options and customization
-
-### Interview Preparation
-- Comprehensive question bank across various categories
-- Performance analytics and improvement suggestions
-- Mock interview simulations with AI feedback
+- **Form-based editor** with guided sections
+- **Markdown preview** with real-time updates
+- **AI enhancement** for content optimization
+- **PDF export** with professional formatting
+- **ATS optimization** for applicant tracking systems
 
 ### Cover Letter Generator
-- Job-specific cover letter creation
-- AI-powered content optimization
-- Professional formatting and structure
+- **Job-specific customization** with company and role details
+- **AI-powered personalization** based on user profile
+- **Industry-tailored content** with relevant keywords
+- **Multiple format support** with export options
+
+### Interview Preparation
+- **Technical question generation** by industry and skills
+- **Multiple choice assessments** with instant feedback
+- **Performance tracking** with detailed analytics
+- **Improvement recommendations** with personalized tips
+
+### Industry Dashboard
+- **Real-time market data** with salary insights
+- **Trending skills analysis** with growth projections
+- **Industry outlook** with market forecasts
+- **Personalized recommendations** for skill development
 
 ## 🔧 Configuration
 
@@ -207,24 +271,158 @@ Google Gemini AI powers the intelligent features:
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
-1. Connect your GitHub repository to Vercel
-2. Add environment variables in Vercel dashboard
-3. Deploy automatically on push to main branch
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Configure environment variables in Vercel dashboard
+4. Deploy automatically with each push
 
-### Other Platforms
-The application can be deployed to any platform that supports Next.js:
-- Netlify
-- Railway
-- DigitalOcean App Platform
-- AWS Amplify
+### Docker
+```dockerfile
+# Dockerfile example
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+### Environment Setup
+- Configure PostgreSQL database (Railway, Supabase, or AWS RDS)
+- Set up Clerk authentication with production keys
+- Configure Google Gemini API access
+- Update CORS and domain settings
+
+## 📈 Performance
+
+### Optimization Features
+- **Server-side rendering** with Next.js 15
+- **Image optimization** with next/image
+- **Code splitting** for faster load times
+- **Caching strategies** for API responses
+- **Progressive loading** for enhanced UX
+
+### Monitoring
+- Real-time error tracking
+- Performance metrics monitoring
+- User analytics and insights
+- Database query optimization
+
+## 🔧 Advanced Configuration
+
+### Customization Options
+- **Theme configuration** in `tailwind.config.js`
+- **API endpoints** in server actions
+- **UI components** in `/components` directory
+- **Database schema** in `prisma/schema.prisma`
+
+### Feature Flags
+```javascript
+// Enable/disable features
+const features = {
+  aiEnhancement: true,
+  pdfExport: true,
+  industryInsights: true,
+  interviewPrep: true,
+}
+```
+
+## 📱 Mobile Support
+
+### Responsive Design
+- Mobile-first approach with Tailwind CSS
+- Touch-friendly interfaces
+- Optimized layouts for all screen sizes
+- Progressive Web App (PWA) capabilities
+
+## 🧪 Testing
+
+### Test Setup
+```bash
+# Run tests
+npm run test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run E2E tests
+npm run test:e2e
+```
+
+### Testing Stack
+- **Jest** for unit testing
+- **React Testing Library** for component testing
+- **Playwright** for end-to-end testing
+- **MSW** for API mocking
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+1. **Database Connection Errors**
+   - Verify DATABASE_URL format
+   - Check PostgreSQL service status
+   - Ensure network connectivity
+
+2. **Authentication Issues**
+   - Verify Clerk API keys
+   - Check domain configuration
+   - Review CORS settings
+
+3. **AI API Errors**
+   - Validate GEMINI_API_KEY
+   - Check API quota limits
+   - Review request formatting
+
+4. **Transaction Timeout Errors**
+   - AI generation may take 10-15 seconds
+   - System automatically retries failed operations
+   - Check network connectivity
+
+### Debug Mode
+```bash
+# Enable debug logging
+DEBUG=true npm run dev
+```
+
+## 📚 Documentation
+
+### API Documentation
+- Server actions documented with JSDoc
+- Database schema with detailed comments
+- Component props with TypeScript definitions
+
+### User Guides
+- Getting started tutorial
+- Feature walkthroughs
+- Best practices guide
+- Troubleshooting tips
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+We welcome contributions to AI Career Catalyst! Here's how you can help:
+
+### Development Process
+1. **Fork the repository**
+2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Make your changes** with proper testing
+4. **Commit your changes** (`git commit -m 'Add amazing feature'`)
+5. **Push to the branch** (`git push origin feature/amazing-feature`)
+6. **Open a Pull Request** with detailed description
+
+### Code Standards
+- Follow TypeScript best practices
+- Use Prettier for code formatting
+- Write meaningful commit messages
+- Add tests for new features
+- Update documentation as needed
+
+### Issues and Bugs
+- Use GitHub Issues for bug reports
+- Provide detailed reproduction steps
+- Include system information and error logs
+- Label issues appropriately
 
 ## 📝 License
 
