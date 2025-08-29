@@ -27,7 +27,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative w-full mobile-container mobile-spacing pt-16 sm:pt-24 md:pt-28 pb-8 sm:pb-12 md:pb-16">
+    <section className="relative w-full mobile-container mobile-spacing mobile-safe-padding sm:pt-28 md:pt-32 lg:pt-28 pb-8 sm:pb-12 md:pb-16">
       {/* Floating elements background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-10 sm:top-20 left-4 sm:left-10 w-12 sm:w-20 h-12 sm:h-20 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-xl floating-animation" style={{animationDelay: '0s'}}></div>

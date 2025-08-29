@@ -33,7 +33,7 @@ export default function Header() {
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-teal-500/5"></div>
       
-      <nav className="relative container mx-auto px-4 h-20 flex items-center justify-between">
+      <nav className="relative container mx-auto px-4 h-16 sm:h-20 flex items-center justify-between">
         <Link href="/" className="group">
           <div className="flex items-center space-x-2">
             <Image

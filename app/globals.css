@@ -256,6 +256,31 @@ body {
     @apply pt-32 sm:pt-28 md:pt-32 lg:pt-28;
   }
   
+  /* Enhanced mobile padding to prevent header overlap */
+  .mobile-safe-padding {
+    padding-top: calc(4.5rem + env(safe-area-inset-top, 0px)); /* 72px for mobile header (h-16) + extra space */
+  }
+  
+  /* Specific fixes for very small screens like iPhone SE */
+  @media (max-width: 375px) {
+    .mobile-safe-padding {
+      padding-top: calc(5.5rem + env(safe-area-inset-top, 0px)); /* Extra space for iPhone SE */
+    }
+  }
+  
+  @media (max-width: 320px) {
+    .mobile-safe-padding {
+      padding-top: calc(6rem + env(safe-area-inset-top, 0px)); /* Even more space for very small devices */
+    }
+  }
+  
+  /* For larger screens, use normal header height */
+  @media (min-width: 640px) {
+    .mobile-safe-padding {
+      padding-top: calc(5.5rem + env(safe-area-inset-top, 0px)); /* 88px for desktop header (h-20) + extra space */
+    }
+  }
+  
   @media (max-width: 640px) {
     .card-hover:hover {
       transform: none; /* Disable hover effects on mobile for better performance */
