@@ -76,18 +76,29 @@ const OnboardingForm = ({ industries }) => {
   const watchIndustry = watch("industry");
 
   return (
-    <div className="flex items-center justify-center bg-background">
-      <Card className="w-full max-w-lg mt-10 mx-2 mb-10">
-        <CardHeader>
-          <CardTitle className="gradient-title text-4xl">
-            Complete Your Profile
-          </CardTitle>
-          <CardDescription>
-            Select your industry to get personalized career insights and
-            recommendations.
-          </CardDescription>
+    <div className="min-h-screen flex items-center justify-center bg-background mobile-container py-4 sm:py-8">
+      <Card className="w-full max-w-lg mx-2 sm:mx-4 glass-card border-2 border-white/20 shadow-2xl relative overflow-hidden">
+        {/* Background gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none"></div>
+        <CardHeader className="relative z-10 text-center sm:text-left">
+          <div className="space-y-2">
+            <div className="inline-flex items-center px-4 py-2 rounded-full glass-morphism border border-primary/20 mb-4">
+              <div className="relative mr-2">
+                <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
+                <div className="absolute top-0 left-0 w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-ping"></div>
+              </div>
+              <span className="text-sm font-semibold gradient-text-secondary">Profile Setup</span>
+            </div>
+            <CardTitle className="gradient-title text-2xl sm:text-3xl md:text-4xl leading-tight">
+              Complete Your Profile
+            </CardTitle>
+            <CardDescription className="text-base sm:text-lg text-center sm:text-left">
+              Select your industry to get personalized career insights and
+              recommendations tailored just for you.
+            </CardDescription>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="relative z-10">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="industry">Industry</Label>
@@ -194,14 +205,20 @@ const OnboardingForm = ({ industries }) => {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={updateLoading}>
+            <Button 
+              type="submit" 
+              className="w-full gradient hover:scale-105 transition-all duration-300 shadow-lg py-3 text-base sm:text-lg font-semibold" 
+              disabled={updateLoading}
+            >
               {updateLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
+                  Saving Profile...
                 </>
               ) : (
-                "Complete Profile"
+                <>
+                  🚀 Complete Profile
+                </>
               )}
             </Button>
           </form>

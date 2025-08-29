@@ -6,7 +6,7 @@ const MainLayout = async ({ children }) => {
       {/* Grid background matching landing page */}
       <div className="grid-background"></div>
       
-      <div className="relative z-10 container mx-auto pt-32 pb-20 px-4 md:px-6">
+      <div className="relative z-10 container mx-auto mobile-container mobile-spacing mobile-header-offset pb-12 sm:pb-16 md:pb-20">
         {children}
       </div>
     </div>

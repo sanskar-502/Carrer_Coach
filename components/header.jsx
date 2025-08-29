@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import {
@@ -10,6 +10,8 @@ import {
   GraduationCap,
   ChevronDown,
   StarsIcon,
+  Menu,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
@@ -24,6 +26,7 @@ import Image from "next/image";
 export default function Header() {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="fixed top-0 w-full border-b border-white/20 bg-background/80 backdrop-blur-xl z-50 supports-[backdrop-filter]:bg-background/60">
@@ -58,8 +61,19 @@ export default function Header() {
           </div>
         )}
 
+        {/* Mobile menu button */}
+        {isHomePage && (
+          <Button
+            variant="ghost"
+            className="lg:hidden p-2 hover:bg-primary/10"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+        )}
+
         {/* Action Buttons */}
-        <div className="flex items-center space-x-3 md:space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
           <SignedIn>
             <Link href="/dashboard">
               <Button
@@ -147,6 +161,46 @@ export default function Header() {
           </SignedIn>
         </div>
       </nav>
+      
+      {/* Mobile Navigation Menu */}
+      {isHomePage && mobileMenuOpen && (
+        <div className="lg:hidden border-b border-white/20 bg-background/95 backdrop-blur-xl">
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex flex-col space-y-4">
+              <a 
+                href="#features" 
+                className="block text-lg font-medium text-muted-foreground hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Features
+              </a>
+              <a 
+                href="#how-it-works" 
+                className="block text-lg font-medium text-muted-foreground hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                How it Works
+              </a>
+              <a 
+                href="#testimonials" 
+                className="block text-lg font-medium text-muted-foreground hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Testimonials
+              </a>
+              
+              {/* Mobile CTA buttons */}
+              <div className="pt-4 flex flex-col space-y-3">
+                <Link href="/dashboard">
+                  <Button className="w-full gradient text-white font-semibold py-3">
+                    🚀 Get Started
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

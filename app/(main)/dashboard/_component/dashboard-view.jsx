@@ -74,18 +74,18 @@ const DashboardView = ({ insights }) => {
   );
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+    <div className="space-y-6 sm:space-y-8">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mobile-gap">
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <div className="w-3 h-3 gradient-secondary rounded-full animate-pulse"></div>
             <span className="text-sm font-semibold gradient-text-secondary uppercase tracking-wider">Dashboard Overview</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-black leading-tight pb-2">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight pb-2">
             <span className="gradient-title block">Industry</span>
             <span className="gradient-title block">Intelligence</span>
           </h1>
-          <p className="text-foreground/70 text-xl font-medium">
+          <p className="text-foreground/70 text-base sm:text-lg md:text-xl font-medium">
             🚀 Stay ahead with <span className="gradient-text-accent font-bold">real-time market intelligence</span> and data-driven insights
           </p>
         </div>
@@ -101,7 +101,7 @@ const DashboardView = ({ insights }) => {
       </div>
 
       {/* Market Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mobile-gap gap-4 sm:gap-6 md:gap-8">
         <Card className="glass-card border-2 border-blue-500/30 card-hover group relative overflow-hidden">
           <div className="absolute inset-0 gradient-secondary opacity-5 group-hover:opacity-10 transition-opacity duration-500"></div>
           <div className="absolute top-0 left-0 w-1 h-full gradient-secondary"></div>

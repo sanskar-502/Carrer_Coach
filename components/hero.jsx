@@ -27,15 +27,15 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative w-full pt-24 md:pt-28 pb-16">
+    <section className="relative w-full mobile-container mobile-spacing pt-16 sm:pt-24 md:pt-28 pb-8 sm:pb-12 md:pb-16">
       {/* Floating elements background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-xl floating-animation" style={{animationDelay: '0s'}}></div>
-        <div className="absolute top-40 right-20 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-xl floating-animation" style={{animationDelay: '2s'}}></div>
-        <div className="absolute bottom-40 left-1/4 w-24 h-24 bg-gradient-to-br from-teal-400/20 to-blue-400/20 rounded-full blur-xl floating-animation" style={{animationDelay: '4s'}}></div>
+        <div className="absolute top-10 sm:top-20 left-4 sm:left-10 w-12 sm:w-20 h-12 sm:h-20 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-xl floating-animation" style={{animationDelay: '0s'}}></div>
+        <div className="absolute top-20 sm:top-40 right-8 sm:right-20 w-16 sm:w-32 h-16 sm:h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-xl floating-animation" style={{animationDelay: '2s'}}></div>
+        <div className="absolute bottom-20 sm:bottom-40 left-1/4 w-12 sm:w-24 h-12 sm:h-24 bg-gradient-to-br from-teal-400/20 to-blue-400/20 rounded-full blur-xl floating-animation" style={{animationDelay: '4s'}}></div>
       </div>
       
-      <div className="relative z-10">
+      <div className="relative z-10 px-4 sm:px-6 lg:px-8">
         <div className="space-y-6 text-center">
           <div className="space-y-6 mx-auto">
             {/* Enhanced badge */}
@@ -47,7 +47,7 @@ const HeroSection = () => {
               <span className="gradient-text-secondary flex items-center">🚀 AI-Powered Career Transformation</span>
             </div>
             
-            <h1 className="text-5xl font-black md:text-6xl lg:text-7xl xl:text-8xl leading-[0.9] mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-[0.9] mb-4">
               <span className="block gradient-title">
                 Career Success
               </span>
@@ -56,11 +56,11 @@ const HeroSection = () => {
               </span>
             </h1>
             
-            <div className="text-xl md:text-2xl font-bold mb-3">
+            <div className="text-lg sm:text-xl md:text-2xl font-bold mb-3">
               <span className="gradient-text-accent">Accelerate • Innovate • Dominate</span>
             </div>
             
-            <p className="mx-auto max-w-[800px] text-lg md:text-xl text-foreground/80 leading-relaxed font-medium">
+            <p className="mx-auto max-w-[800px] text-base sm:text-lg md:text-xl text-foreground/80 leading-relaxed font-medium px-2">
               Unlock your potential with our revolutionary AI platform that provides 
               <span className="gradient-text-secondary font-bold"> personalized career guidance</span>, 
               smart resume optimization, and expert interview preparation.

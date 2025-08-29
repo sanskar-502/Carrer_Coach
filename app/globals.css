@@ -12,6 +12,19 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px; /* Slightly smaller base font size for mobile */
+  }
+  
+  body {
+    -webkit-text-size-adjust: 100%; /* Prevent iOS font scaling */
+    -moz-text-size-adjust: 100;
+    text-size-adjust: 100%;
+  }
+}
+
 @layer base {
   :root {
     /* Enhanced modern color scheme with vibrant gradients */
@@ -216,6 +229,45 @@ body {
   
   .modern-gradient-bg {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  /* Mobile-specific utilities */
+  .mobile-container {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+  
+  .mobile-text-scale {
+    @apply text-sm sm:text-base;
+  }
+  
+  .mobile-title-scale {
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
+  }
+  
+  .mobile-spacing {
+    @apply py-8 sm:py-12 md:py-16 lg:py-20;
+  }
+  
+  .mobile-gap {
+    @apply gap-4 sm:gap-6 md:gap-8;
+  }
+  
+  .mobile-header-offset {
+    @apply pt-32 sm:pt-28 md:pt-32 lg:pt-28;
+  }
+  
+  @media (max-width: 640px) {
+    .card-hover:hover {
+      transform: none; /* Disable hover effects on mobile for better performance */
+    }
+    
+    .floating-animation {
+      animation: none; /* Disable floating animations on mobile */
+    }
+    
+    .glow-effect {
+      box-shadow: none; /* Simplify shadows on mobile */
+    }
   }
 }
 
