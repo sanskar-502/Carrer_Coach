@@ -41,6 +41,8 @@ export default function Header() {
               alt="AI Catalyst logo"
               width={200}
               height={60}
+              priority
+              sizes="(max-width: 768px) 160px, 200px"
               className="h-14 py-1 w-auto object-contain transition-transform group-hover:scale-105"
             />
           </div>
