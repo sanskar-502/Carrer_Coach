@@ -3,7 +3,7 @@
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { generateAIInsights } from "./dashboard";
+import { buildFallbackInsights, generateAIInsights } from "./dashboard";
 import { checkUser } from "@/lib/checkUser";
 
 export async function updateUser(data) {
@@ -24,7 +24,13 @@ export async function updateUser(data) {
 
     // If industry doesn't exist, generate insights (this can be slow)
     if (!industryInsight) {
-      const insights = await generateAIInsights(data.industry);
+      let insights;
+      try {
+        insights = await generateAIInsights(data.industry);
+      } catch (error) {
+        console.error("AI insights failed, using fallback:", error?.message || error);
+        insights = buildFallbackInsights(data.industry);
+      }
 
       industryInsight = await db.industryInsight.create({
         data: {

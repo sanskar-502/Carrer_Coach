@@ -8,6 +8,40 @@ import { checkUser } from "@/lib/checkUser";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
+export const buildFallbackInsights = (industry) => ({
+  salaryRanges: [
+    { role: "Entry Level", min: 40000, max: 60000, median: 50000, location: "US" },
+    { role: "Associate", min: 60000, max: 90000, median: 75000, location: "US" },
+    { role: "Senior", min: 90000, max: 130000, median: 110000, location: "US" },
+    { role: "Lead", min: 110000, max: 160000, median: 135000, location: "US" },
+    { role: "Manager", min: 120000, max: 180000, median: 150000, location: "US" },
+  ],
+  growthRate: 5,
+  demandLevel: "Medium",
+  topSkills: [
+    "Communication",
+    "Problem solving",
+    "Data literacy",
+    "Project management",
+    "Domain knowledge",
+  ],
+  marketOutlook: "Neutral",
+  keyTrends: [
+    "Automation adoption",
+    "AI-assisted workflows",
+    "Remote and hybrid teams",
+    "Cost optimization",
+    "Regulatory focus",
+  ],
+  recommendedSkills: [
+    "AI literacy",
+    "Analytics",
+    "Cloud basics",
+    "Security awareness",
+    "Stakeholder management",
+  ],
+});
+
 export const generateAIInsights = async (industry) => {
   const prompt = `
           Analyze the current state of the ${industry} industry and provide insights in ONLY the following JSON format without any additional notes or explanations:
@@ -58,9 +92,15 @@ export async function getIndustryInsights() {
     throw new Error("User needs to complete onboarding first");
   }
 
-  // If no insights exist, generate them
+  // If no insights exist, generate them (or fall back if AI fails)
   if (!userWithInsights.industryInsight) {
-    const insights = await generateAIInsights(userWithInsights.industry);
+    let insights;
+    try {
+      insights = await generateAIInsights(userWithInsights.industry);
+    } catch (error) {
+      console.error("AI insights failed, using fallback:", error?.message || error);
+      insights = buildFallbackInsights(userWithInsights.industry);
+    }
 
     const industryInsight = await db.industryInsight.create({
       data: {
@@ -79,18 +119,22 @@ export async function getIndustryInsights() {
   const nextUpdate = new Date(userWithInsights.industryInsight.nextUpdate);
   
   if (now > nextUpdate) {
-    const insights = await generateAIInsights(userWithInsights.industry);
-    
-    const updatedInsight = await db.industryInsight.update({
-      where: { industry: userWithInsights.industry },
-      data: {
-        ...insights,
-        lastUpdated: new Date(),
-        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      },
-    });
-    
-    return updatedInsight;
+    try {
+      const insights = await generateAIInsights(userWithInsights.industry);
+
+      const updatedInsight = await db.industryInsight.update({
+        where: { industry: userWithInsights.industry },
+        data: {
+          ...insights,
+          lastUpdated: new Date(),
+          nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      });
+
+      return updatedInsight;
+    } catch (error) {
+      console.error("AI refresh failed, keeping existing insights:", error?.message || error);
+    }
   }
 
   return userWithInsights.industryInsight;
