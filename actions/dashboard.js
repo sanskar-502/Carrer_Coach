@@ -8,7 +8,7 @@ import { checkUser } from "@/lib/checkUser";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-export const buildFallbackInsights = (industry) => ({
+export const buildFallbackInsights = async (industry) => ({
   salaryRanges: [
     { role: "Entry Level", min: 40000, max: 60000, median: 50000, location: "US" },
     { role: "Associate", min: 60000, max: 90000, median: 75000, location: "US" },
@@ -99,7 +99,7 @@ export async function getIndustryInsights() {
       insights = await generateAIInsights(userWithInsights.industry);
     } catch (error) {
       console.error("AI insights failed, using fallback:", error?.message || error);
-      insights = buildFallbackInsights(userWithInsights.industry);
+      insights = await buildFallbackInsights(userWithInsights.industry);
     }
 
     const industryInsight = await db.industryInsight.create({

@@ -29,7 +29,7 @@ export async function updateUser(data) {
         insights = await generateAIInsights(data.industry);
       } catch (error) {
         console.error("AI insights failed, using fallback:", error?.message || error);
-        insights = buildFallbackInsights(data.industry);
+        insights = await buildFallbackInsights(data.industry);
       }
 
       industryInsight = await db.industryInsight.create({
