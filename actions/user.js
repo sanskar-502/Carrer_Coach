@@ -32,14 +32,23 @@ export async function updateUser(data) {
         insights = await buildFallbackInsights(data.industry);
       }
 
-      industryInsight = await db.industryInsight.create({
-        data: {
-          industry: data.industry,
-          ...insights,
-          lastUpdated: new Date(),
-          nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        },
+      // Re-check after slow AI call — the Neon serverless Postgres connection
+      // may have gone stale during the 20-30s Gemini API call. This fresh
+      // query re-establishes the connection before the write.
+      industryInsight = await db.industryInsight.findUnique({
+        where: { industry: data.industry },
       });
+
+      if (!industryInsight) {
+        industryInsight = await db.industryInsight.create({
+          data: {
+            industry: data.industry,
+            ...insights,
+            lastUpdated: new Date(),
+            nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          },
+        });
+      }
     }
 
     // Now update the user (quick operation, no need for extended transaction)

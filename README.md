@@ -1,447 +1,509 @@
 # 🚀 AI Career Catalyst
 
-An intelligent career development platform powered by AI that helps professionals accelerate their career growth through personalized guidance, smart resume building, and expert interview preparation.
+A full-stack AI career development platform that combines a **Next.js 15** frontend with a **Python FastAPI** backend to deliver personalized career coaching through **RAG (Retrieval-Augmented Generation)**, smart resume building, AI interview prep, and real-time industry intelligence.
 
-![AI Career Catalyst](https://img.shields.io/badge/AI-Career%20Catalyst-blue?style=for-the-badge&logo=artificial-intelligence)
-![Next.js](https://img.shields.io/badge/Next.js-15.1.4-black?style=for-the-badge&logo=next.js)
-![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
+![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=for-the-badge&logo=next.js)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python)
+![LangChain](https://img.shields.io/badge/LangChain-0.3-1C3C3C?style=for-the-badge&logo=langchain)
+![Pinecone](https://img.shields.io/badge/Pinecone-Vector_DB-000?style=for-the-badge)
+![Gemini](https://img.shields.io/badge/Google_Gemini-2.5_Flash-4285F4?style=for-the-badge&logo=google)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?style=for-the-badge&logo=tailwind-css)
 
+---
+
+## 📑 Table of Contents
+
+- [Features](#-features)
+- [System Architecture](#-system-architecture)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Database Schema](#-database-schema)
+- [AI & GenAI Integration](#-ai--genai-integration)
+- [Getting Started](#-getting-started)
+- [Environment Variables](#-environment-variables)
+- [Running the Application](#-running-the-application)
+- [API Reference](#-api-reference)
+- [UI/UX Design System](#-uiux-design-system)
+- [Deployment](#-deployment)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+
+---
 
 ## ✨ Features
 
-### 🧠 AI-Powered Career Guidance
-- Personalized career advice and insights powered by advanced AI technology
-- Industry-specific recommendations and growth strategies
-- Real-time career path analysis and suggestions
+### 🤖 AI Career Advisor (RAG Pipeline)
+- **Upload documents** (resumes, job descriptions, cover letters) as PDF or TXT
+- Documents are **chunked, embedded, and stored in Pinecone** vector database
+- **Conversational chat** with an AI that retrieves relevant context from your uploaded documents
+- **Source attribution** — every answer shows which documents were referenced
+- **Session memory** — maintains conversation history for follow-up questions
+- **Job-Resume Match Analysis** — paste your resume and a job description to get a structured analysis with match score (0-100), skill gaps, missing keywords, and actionable recommendations
 
-### 💼 Interview Preparation
-- Practice with role-specific questions across 50+ industries
-- Instant feedback and performance analytics
-- Behavioral and technical interview simulations
-- AI-generated improvement tips and strategies
+### 📊 Industry Intelligence Dashboard
+- AI-generated salary ranges, growth rates, and demand levels for 50+ industries
+- Top in-demand skills and key market trends
+- Market outlook analysis (Positive/Neutral/Negative)
+- Personalized skill recommendations
+- **Auto-refreshes weekly** via Inngest background cron jobs
+- Interactive charts built with Recharts
 
-### 📊 Industry Insights
-- Real-time industry trends and market analysis
-- Salary data and compensation insights
-- Demand level analysis and growth projections
-- Top skills identification for each industry
+### 📝 AI Resume Builder
+- Full Markdown editor with live preview (`@uiw/react-md-editor`)
+- Guided sections: Contact, Summary, Experience, Education, Skills, Projects
+- **"Improve with AI" button** per section — Gemini rewrites content with action verbs, metrics, and industry keywords
+- ATS score tracking
+- **One-click PDF export** via html2pdf.js
+- Auto-saves on every edit
 
-### 📝 Smart Resume Creation
-- ATS-optimized resume generation with AI assistance
-- Industry-specific formatting and keyword optimization
-- Real-time feedback and scoring
-- Professional templates and customization options
+### 💼 AI Interview Preparation
+- Generates **10 MCQ technical questions** tailored to your industry and skills
+- Instant scoring with detailed explanations
+- AI-generated **improvement tips** based on wrong answers
+- Performance history tracking with trend charts
+- Covers Technical and Behavioral categories
 
-### 🎯 Cover Letter Generator
-- AI-powered cover letter creation
-- Job-specific customization
-- Professional tone and structure optimization
-- Multiple format options
+### ✉️ AI Cover Letter Generator
+- Generates personalized cover letters from your profile + job description
+- Uses your industry, skills, experience, and bio for context
+- Professional markdown formatting
+- Full CRUD — create, view, list, delete
+- Saved per-user in the database
 
-## 🏗️ Architecture
+### 🔐 Authentication & Onboarding
+- **Clerk** authentication with social login (Google, GitHub, etc.)
+- Multi-step onboarding: industry selection (15 categories × 13 sub-industries), bio, experience, skills
+- Automatic Clerk-to-database user sync via `checkUser()` helper
 
-### Tech Stack
-- **Frontend**: Next.js 15.1.4 with React 18 and TypeScript
-- **Styling**: Tailwind CSS with custom components and glass-morphism effects
-- **Authentication**: Clerk for user management and security
-- **Database**: PostgreSQL with Prisma ORM
-- **AI Integration**: Google Gemini 2.5 Flash for content generation
-- **UI Components**: Radix UI primitives with custom styling
-- **Charts**: Recharts for data visualization
-- **PDF Generation**: html2pdf.js for document export
+---
 
-### Project Structure
+## 🏗️ System Architecture
+
 ```
-├── app/                    # Next.js 15 app router
-│   ├── (auth)/            # Authentication pages
-│   ├── (main)/            # Main application pages
-│   ├── globals.css        # Global styles and utilities
-│   └── layout.js          # Root layout
-├── components/            # Reusable UI components
-│   ├── ui/               # Base UI components (buttons, cards, etc.)
-│   ├── header.jsx        # Navigation header
-│   ├── hero.jsx          # Landing page hero section
-│   └── scroll-to-top.jsx # Scroll restoration component
-├── actions/              # Server actions
-│   ├── dashboard.js      # Industry insights and AI generation
-│   ├── resume.js         # Resume management
-│   ├── cover-letter.js   # Cover letter generation
-│   ├── interview.js      # Interview prep and assessments
-│   └── user.js           # User management and onboarding
-├── lib/                  # Utility libraries
-│   ├── prisma.js         # Database client
-│   ├── checkUser.js      # User authentication helper
-│   └── utils.js          # Common utilities
-├── data/                 # Static data files
-│   ├── features.js       # Feature definitions
-│   ├── testimonials.js   # Customer testimonials
-│   ├── faqs.js          # Frequently asked questions
-│   └── howItWorks.js    # Process flow data
-└── prisma/              # Database schema and migrations
-    ├── schema.prisma     # Database schema
-    └── migrations/       # Database migration files
+┌─────────────────────────────────────────────────────────────────┐
+│                        CLIENT (Browser)                         │
+│                                                                 │
+│  Next.js 15 App Router (React 19)                              │
+│  ┌──────────┬──────────┬───────────┬──────────┬──────────────┐ │
+│  │Dashboard │ Resume   │ Interview │Cover     │ AI Advisor   │ │
+│  │(Recharts)│ (MD Edit)│ (Quiz)    │Letter    │ (Chat/Upload)│ │
+│  └────┬─────┴────┬─────┴─────┬─────┴────┬─────┴──────┬───────┘ │
+│       │          │           │          │            │          │
+│  Server Actions (actions/*.js)         API Proxy Route         │
+│  (Direct Gemini SDK calls)             /api/ai-advisor         │
+└───────┼──────────┼───────────┼──────────┼────────────┼──────────┘
+        │          │           │          │            │
+        ▼          ▼           ▼          ▼            ▼
+   ┌─────────┐ ┌─────────┐                    ┌──────────────┐
+   │  Clerk  │ │  Neon   │                    │ Python       │
+   │  Auth   │ │Postgres │                    │ FastAPI :8000│
+   └─────────┘ │(Prisma) │                    │              │
+               └─────────┘                    │ LangChain    │
+                                              │ RAG Engine   │
+                                              └──────┬───────┘
+                                                     │
+                                          ┌──────────┼──────────┐
+                                          ▼          ▼          ▼
+                                     ┌────────┐ ┌────────┐ ┌────────┐
+                                     │Gemini  │ │Pinecone│ │Gemini  │
+                                     │Embed   │ │VectorDB│ │LLM     │
+                                     │(768-d) │ │        │ │(Chat)  │
+                                     └────────┘ └────────┘ └────────┘
 ```
 
-## 🚀 Getting Started
+**Key architectural decisions:**
+- The original 4 features (Dashboard, Resume, Interview, Cover Letter) use **direct Gemini SDK calls** from Next.js server actions — simple and fast
+- The new RAG features (AI Advisor, Job Match) use a **separate Python FastAPI backend** with **LangChain** — necessary for complex chain orchestration, vector store management, and conversation memory
+- The Next.js `/api/ai-advisor` route acts as a **proxy** to avoid CORS issues and keep the frontend clean
 
-### Prerequisites
-- Node.js 18+ 
-- PostgreSQL database (Neon DB recommended)
-- Clerk account for authentication
-- Google Gemini API key
+---
 
-### Installation
+## 🛠️ Tech Stack
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/sanskar-502/Carrer_Coach.git
-   cd Carrer_Coach/ai-career-coach
-   ```
+| Layer | Technology | Purpose |
+|---|---|---|
+| **Frontend** | Next.js 15 (App Router, Turbopack) | SSR, routing, server actions |
+| **UI Framework** | React 19 | Component rendering |
+| **Styling** | Tailwind CSS 3 + custom design system | Glassmorphism, gradients, animations |
+| **UI Components** | shadcn/ui (Radix UI primitives) | 15 base components (Button, Card, Tabs, etc.) |
+| **Charts** | Recharts | Salary bars, interview score trends |
+| **Icons** | Lucide React | Consistent iconography |
+| **Auth** | Clerk (dark theme) | Sign-in, sign-up, session management |
+| **Database** | PostgreSQL on Neon (serverless) | User data, resumes, assessments |
+| **ORM** | Prisma | Type-safe database queries |
+| **AI (Frontend)** | Google Gemini 2.5 Flash (`@google/generative-ai`) | Direct content generation |
+| **AI (Backend)** | LangChain (`langchain-google-genai`) | RAG chains, memory, retrieval |
+| **Vector DB** | Pinecone (Serverless, AWS us-east-1) | Document embeddings storage & similarity search |
+| **Embeddings** | Google `embedding-001` (768 dimensions) | Document vectorization |
+| **Backend** | Python FastAPI + Uvicorn | RAG API server |
+| **Background Jobs** | Inngest | Weekly industry insight refresh (cron) |
+| **PDF** | html2pdf.js (export), PyPDF (ingestion) | Resume export & document parsing |
+| **Markdown** | react-markdown, @uiw/react-md-editor | Resume editing & rendering |
+| **Forms** | React Hook Form + Zod | Validation |
+| **Notifications** | Sonner | Toast messages |
+| **Font** | Inter (Google Fonts) | Typography |
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   Create a `.env` file in the root directory:
-   ```env
-   # Database
-   DATABASE_URL="your_postgresql_connection_string"
-   
-   # Authentication (Clerk)
-   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your_clerk_publishable_key"
-   CLERK_SECRET_KEY="your_clerk_secret_key"
-   NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-   NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-   NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/onboarding
-   NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/onboarding
-   
-   # AI Services
-   GEMINI_API_KEY="your_gemini_api_key"
-   ```
-
-4. **Set up the database**
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
-
-5. **Run the development server**
-   ```bash
-   npm run dev
-   ```
-
-6. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+---
 
 ## 📁 Project Structure
 
 ```
-ai-career-coach/
-├── app/                    # Next.js App Router
-│   ├── (auth)/            # Authentication pages
-│   ├── (main)/            # Main application pages
-│   │   ├── dashboard/     # User dashboard
-│   │   ├── resume/        # Resume builder
-│   │   ├── interview/     # Interview preparation
-│   │   ├── ai-cover-letter/ # Cover letter generator
-│   │   └── onboarding/    # User onboarding
-│   ├── api/               # API routes
-│   └── globals.css        # Global styles
-├── components/            # Reusable UI components
-│   ├── ui/               # Shadcn/ui components
-│   ├── header.jsx        # Navigation header
-│   └── hero.jsx          # Landing page hero
-├── data/                 # Static data and content
-├── lib/                  # Utility functions and configurations
-├── prisma/               # Database schema and migrations
-├── public/               # Static assets
-└── hooks/                # Custom React hooks
+Carrer_Coach/
+├── app/                              # Next.js 15 App Router
+│   ├── layout.js                     # Root layout (Clerk, ThemeProvider, Header, Footer)
+│   ├── page.js                       # Landing page (Hero, Features, Stats, FAQ, CTA)
+│   ├── globals.css                   # Design system (361 lines of tokens & utilities)
+│   ├── not-found.jsx                 # Custom 404
+│   ├── (auth)/                       # Auth route group
+│   │   ├── layout.js
+│   │   ├── sign-in/[[...sign-in]]/page.jsx
+│   │   └── sign-up/[[...sign-up]]/page.jsx
+│   ├── (main)/                       # Authenticated route group
+│   │   ├── layout.jsx                # Shared layout (grid-background, container)
+│   │   ├── onboarding/              # User onboarding flow
+│   │   │   ├── page.jsx
+│   │   │   └── _components/onboarding-form.jsx
+│   │   ├── dashboard/               # Industry insights dashboard
+│   │   │   ├── page.jsx
+│   │   │   ├── layout.js            # Suspense boundary
+│   │   │   └── _component/dashboard-view.jsx  (Recharts, insights)
+│   │   ├── resume/                  # AI resume builder
+│   │   │   ├── page.jsx
+│   │   │   └── _components/resume-builder.jsx (MD editor, PDF export)
+│   │   ├── interview/              # Interview preparation
+│   │   │   ├── page.jsx            # Assessment history
+│   │   │   ├── layout.js
+│   │   │   ├── mock/page.jsx       # Live quiz page
+│   │   │   └── _components/quiz-list.jsx
+│   │   ├── ai-cover-letter/        # Cover letter generator
+│   │   │   ├── page.jsx            # List all letters
+│   │   │   ├── new/page.jsx        # Create new letter
+│   │   │   ├── [id]/page.jsx       # View specific letter
+│   │   │   └── _components/cover-letter-list.jsx
+│   │   └── ai-advisor/             # 🆕 RAG-powered AI advisor
+│   │       ├── page.jsx
+│   │       └── _components/ai-advisor-view.jsx (Chat, Upload, Job Match)
+│   └── api/
+│       ├── ai-advisor/route.js      # 🆕 Proxy to Python backend
+│       └── inngest/route.js         # Inngest webhook handler
+│
+├── actions/                          # Next.js Server Actions
+│   ├── user.js                      # updateUser, getUserOnboardingStatus
+│   ├── dashboard.js                 # generateAIInsights, getIndustryInsights
+│   ├── interview.js                 # generateQuiz, saveQuizResult, getAssessments
+│   ├── resume.js                    # saveResume, getResume, improveWithAI
+│   └── cover-letter.js             # generateCoverLetter, CRUD operations
+│
+├── components/
+│   ├── header.jsx                   # Global nav (Growth Tools dropdown, Clerk auth)
+│   ├── hero.jsx                     # Landing hero with 3D scroll effect
+│   ├── scroll-to-top.jsx
+│   ├── theme-provider.jsx           # next-themes wrapper
+│   └── ui/                          # 15 shadcn/ui components
+│       ├── accordion.jsx, badge.jsx, button.jsx, card.jsx,
+│       ├── dialog.jsx, dropdown-menu.jsx, input.jsx, label.jsx,
+│       ├── progress.jsx, radio-group.jsx, select.jsx, sonner.jsx,
+│       └── tabs.jsx, textarea.jsx, alert-dialog.jsx
+│
+├── lib/
+│   ├── prisma.js                    # Singleton Prisma client
+│   ├── checkUser.js                 # Clerk → DB user sync helper
+│   ├── utils.js                     # cn() class merge utility
+│   └── inngest/
+│       ├── client.js                # Inngest client config
+│       └── function.js              # Weekly insight refresh cron
+│
+├── data/                            # Static data for landing page
+│   ├── features.js                  # 5 feature cards
+│   ├── howItWorks.js                # 4-step process
+│   ├── testimonial.js               # 3 testimonials
+│   ├── faqs.js                      # FAQ accordion data
+│   └── industries.js                # 15 categories × 13 sub-industries
+│
+├── hooks/
+│   └── use-fetch.js                 # Generic async state wrapper
+│
+├── prisma/
+│   ├── schema.prisma                # 5 models (User, Resume, Assessment, CoverLetter, IndustryInsight)
+│   └── migrations/
+│
+├── backend/                          # 🆕 Python FastAPI + LangChain
+│   ├── requirements.txt             # Python dependencies
+│   ├── main.py                      # FastAPI server (6 endpoints)
+│   ├── rag_engine.py                # RAG pipeline (ingest, query, analyze)
+│   └── prompts.py                   # LangChain prompt templates
+│
+├── public/                          # Static assets
+│   ├── aicatalyst.png               # Logo
+│   ├── catalyst_hero.png            # Hero screenshot
+│   └── logo.png, banner*.jpeg
+│
+├── middleware.js                     # Clerk route protection
+├── package.json
+├── tailwind.config.mjs
+└── .env                             # Environment variables
 ```
+
+---
 
 ## 🗃️ Database Schema
 
-### Core Models
-- **User** - User profiles with industry and skill information
-- **Resume** - Resume content and metadata
-- **CoverLetter** - Generated cover letters with job details
-- **Assessment** - Interview assessment results and feedback
-- **IndustryInsight** - AI-generated market intelligence data
+**PostgreSQL on Neon** with **Prisma ORM**. Five models:
 
-### Key Features
-- **Automatic user creation** from Clerk authentication
-- **Industry-specific insights** with AI-generated content
-- **Progress tracking** with detailed analytics
-- **Secure data isolation** per user
+| Model | Purpose | Key Fields |
+|---|---|---|
+| **User** | User profiles synced from Clerk | `clerkUserId`, `email`, `industry`, `bio`, `experience`, `skills[]` |
+| **Resume** | One resume per user (markdown) | `content` (Text), `atsScore`, `feedback` |
+| **Assessment** | Interview quiz results | `quizScore`, `questions` (JSON[]), `improvementTip` |
+| **CoverLetter** | Generated cover letters | `content`, `companyName`, `jobTitle`, `jobDescription`, `status` |
+| **IndustryInsight** | AI-generated market data | `salaryRanges` (JSON[]), `growthRate`, `demandLevel`, `topSkills[]`, `marketOutlook`, `keyTrends[]`, `recommendedSkills[]` |
 
-## 🤖 AI Integration
+**Relationships:**
+- `User` → `Resume` (1:1)
+- `User` → `Assessment` (1:many)
+- `User` → `CoverLetter` (1:many)
+- `User` → `IndustryInsight` (many:1, via `industry` field)
 
-### Google Gemini 2.5 Flash
-- **Resume Enhancement** - Improves resume content with industry-specific optimization
-- **Cover Letter Generation** - Creates personalized cover letters based on job descriptions
-- **Interview Questions** - Generates technical interview questions by industry and skills
-- **Industry Insights** - Provides real-time market analysis and trending skills
-- **Improvement Tips** - Offers personalized feedback based on assessment results
+---
 
-### AI Features
-- Context-aware content generation
-- Industry-specific customization
-- Real-time data processing
-- Intelligent content optimization
+## 🤖 AI & GenAI Integration
 
-## 🎨 UI/UX Design
+### Direct Gemini Calls (Frontend Server Actions)
+The original features call Google Gemini 2.5 Flash directly using `@google/generative-ai`:
 
-### Design System
-- **Glass-morphism** effects with backdrop blur
-- **Gradient backgrounds** and text styling
-- **Responsive design** for all device sizes
-- **Smooth animations** and micro-interactions
-- **Dark mode support** with theme switching
+| Feature | Server Action | What Gemini Does |
+|---|---|---|
+| Dashboard | `generateAIInsights()` | Generates salary data, growth rates, skills, trends as structured JSON |
+| Resume | `improveWithAI()` | Rewrites resume sections with action verbs, metrics, industry keywords |
+| Interview | `generateQuiz()` | Creates 10 MCQ questions + explanations for user's industry/skills |
+| Interview | `saveQuizResult()` | Generates improvement tips based on wrong answers |
+| Cover Letter | `generateCoverLetter()` | Writes personalized letters using user profile + job details |
 
-### Components
-- Custom UI components built on Radix UI
-- Consistent spacing and typography
-- Accessible form controls and navigation
-- Interactive charts and data visualization
+### LangChain RAG Pipeline (Python Backend)
+The new AI Advisor feature uses a full RAG architecture:
 
-## 🔐 Security & Authentication
+```
+Document Upload Flow:
+  PDF/TXT → PyPDFLoader/TextLoader → RecursiveCharacterTextSplitter (1000/200)
+  → GoogleGenerativeAIEmbeddings (768-d) → PineconeVectorStore.add_documents()
+  → Document summary generated via Gemini
 
-### Clerk Integration
-- Enterprise-grade authentication
-- Social login support (Google, GitHub, etc.)
-- Secure session management
-- User profile synchronization
+Chat Query Flow:
+  User question → ConversationalRetrievalChain
+  → Condense question with history → Pinecone similarity search (top 5)
+  → Retrieved chunks + conversation memory → Gemini generates answer
+  → Response with source document attribution
 
-### Data Security
-- Server-side validation for all user inputs
-- Secure API endpoints with authentication checks
-- Database isolation per user
-- Environment variable protection for sensitive data
+Job Match Flow:
+  Resume text + Job Description → JOB_MATCH_PROMPT → Gemini
+  → Structured JSON: match score, matching skills, missing skills,
+    experience analysis, recommendations, keywords to add
+```
 
-## 📊 Features Overview
+**LangChain components used:**
+- `ChatGoogleGenerativeAI` — LLM wrapper for Gemini
+- `GoogleGenerativeAIEmbeddings` — Embedding model (768-d vectors)
+- `PineconeVectorStore` — Vector store integration
+- `ConversationalRetrievalChain` — RAG chain with memory
+- `ConversationBufferWindowMemory` — 10-message sliding window
+- `RecursiveCharacterTextSplitter` — Document chunking
+- `ChatPromptTemplate` / `MessagesPlaceholder` — Prompt engineering
 
-### Resume Builder
-- **Form-based editor** with guided sections
-- **Markdown preview** with real-time updates
-- **AI enhancement** for content optimization
-- **PDF export** with professional formatting
-- **ATS optimization** for applicant tracking systems
+### Inngest Background Jobs
+- `generateIndustryInsights` cron runs **every Sunday at midnight**
+- Iterates all industries in the database
+- Regenerates insights via Gemini and updates `IndustryInsight` records
+- Keeps dashboard data fresh without user intervention
 
-### Cover Letter Generator
-- **Job-specific customization** with company and role details
-- **AI-powered personalization** based on user profile
-- **Industry-tailored content** with relevant keywords
-- **Multiple format support** with export options
+---
 
-### Interview Preparation
-- **Technical question generation** by industry and skills
-- **Multiple choice assessments** with instant feedback
-- **Performance tracking** with detailed analytics
-- **Improvement recommendations** with personalized tips
+## 🚀 Getting Started
 
-### Industry Dashboard
-- **Real-time market data** with salary insights
-- **Trending skills analysis** with growth projections
-- **Industry outlook** with market forecasts
-- **Personalized recommendations** for skill development
+### Prerequisites
+- **Node.js 18+** and npm
+- **Python 3.10+** (for RAG backend)
+- **PostgreSQL** database ([Neon](https://neon.tech) recommended — free tier available)
+- **Clerk** account ([clerk.com](https://clerk.com) — free tier available)
+- **Google Gemini API key** ([ai.google.dev](https://ai.google.dev))
+- **Pinecone** account ([pinecone.io](https://www.pinecone.io) — free tier available)
 
-## 🔧 Configuration
+### Installation
 
-### Database Setup
-The application uses PostgreSQL with Prisma ORM. Make sure to:
-1. Set up a PostgreSQL database (Neon DB recommended for production)
-2. Update the `DATABASE_URL` in your `.env` file
-3. Run database migrations: `npx prisma db push`
+```bash
+# 1. Clone the repository
+git clone https://github.com/sanskar-502/Carrer_Coach.git
+cd Carrer_Coach
 
-### Authentication
-Clerk handles all authentication. Configure:
-1. Create a Clerk application
-2. Add your Clerk keys to the environment variables
-3. Configure sign-in/sign-up URLs
+# 2. Install frontend dependencies
+npm install
 
-### AI Integration
-Google Gemini AI powers the intelligent features:
-1. Get a Gemini API key from Google AI Studio
-2. Add the key to your environment variables
-3. The AI will provide personalized career guidance and content generation
+# 3. Set up environment variables (see section below)
+cp .env.example .env  # then edit with your keys
+
+# 4. Set up the database
+npx prisma generate
+npx prisma db push
+
+# 5. Set up the Python backend
+cd backend
+python -m venv venv
+
+# Windows:
+.\venv\Scripts\activate
+# macOS/Linux:
+# source venv/bin/activate
+
+pip install -r requirements.txt
+cd ..
+```
+
+---
+
+## 🔑 Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+# Authentication (Clerk)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/onboarding
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/onboarding
+
+# Database (Neon Postgres)
+DATABASE_URL=postgresql://user:pass@host/dbname?sslmode=require
+
+# AI - Google Gemini
+GEMINI_API_KEY=AIza...
+
+# AI - Pinecone Vector Database (for RAG backend)
+PINECONE_API_KEY=pcsk_...
+```
+
+> **Note:** The Python backend reads `GEMINI_API_KEY` and `PINECONE_API_KEY` from the same root `.env` file.
+
+---
+
+## ▶️ Running the Application
+
+You need **two terminals** — one for the frontend, one for the backend:
+
+### Terminal 1 — Next.js Frontend
+```bash
+npm run dev
+# → http://localhost:3000
+```
+
+### Terminal 2 — Python RAG Backend
+```bash
+cd backend
+.\venv\Scripts\activate          # Windows
+# source venv/bin/activate       # macOS/Linux
+uvicorn main:app --reload --port 8000
+# → http://localhost:8000
+```
+
+### Verify Both Are Running
+- Frontend: visit `http://localhost:3000`
+- Backend health check: visit `http://localhost:8000/api/health`
+- AI Advisor page: sign in → Growth Tools → AI Advisor (status badge should show "RAG Backend Online")
+
+---
+
+## 📡 API Reference
+
+### Python Backend Endpoints (port 8000)
+
+| Method | Endpoint | Description | Body |
+|---|---|---|---|
+| `GET` | `/api/health` | Health check & component status | — |
+| `POST` | `/api/chat` | RAG-powered career advisor chat | `{ message, session_id?, user_id? }` |
+| `POST` | `/api/upload` | Upload document for RAG ingestion | `multipart/form-data: file, user_id` |
+| `POST` | `/api/analyze` | Job-resume match analysis | `{ resume_text, job_description }` |
+| `GET` | `/api/documents` | List all ingested documents | — |
+| `POST` | `/api/clear-session` | Clear conversation memory | `session_id` |
+
+### Next.js Proxy Route
+All frontend requests go through `/api/ai-advisor?action=<action>` which proxies to the Python backend. This avoids CORS issues.
+
+---
+
+## 🎨 UI/UX Design System
+
+Defined in `globals.css` (361 lines):
+
+- **Glass-morphism**: `.glass-morphism`, `.glass-card` — backdrop blur + translucent backgrounds
+- **Gradients**: `.gradient` (primary), `.gradient-secondary`, `.gradient-accent`, `.gradient-success`
+- **Gradient text**: `.gradient-title`, `.gradient-text-secondary`, `.gradient-text-accent`
+- **Animations**: `.floating-animation`, `.card-hover`, `.grid-background`
+- **Dark mode**: Full dark theme with CSS variables, default enabled
+- **Mobile-first**: Responsive utilities, disabled animations on mobile for performance
+- **Hero parallax**: 3D perspective transform on scroll (`hero-image.scrolled`)
+
+---
 
 ## 🚀 Deployment
 
-### Vercel (Recommended)
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Configure environment variables in Vercel dashboard
-4. Deploy automatically with each push
-
-### Docker
-```dockerfile
-# Dockerfile example
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-### Environment Setup
-- Configure PostgreSQL database (Railway, Supabase, or AWS RDS)
-- Set up Clerk authentication with production keys
-- Configure Google Gemini API access
-- Update CORS and domain settings
-
-## 📈 Performance
-
-### Optimization Features
-- **Server-side rendering** with Next.js 15
-- **Image optimization** with next/image
-- **Code splitting** for faster load times
-- **Caching strategies** for API responses
-- **Progressive loading** for enhanced UX
-
-### Monitoring
-- Real-time error tracking
-- Performance metrics monitoring
-- User analytics and insights
-- Database query optimization
-
-## 🔧 Advanced Configuration
-
-### Customization Options
-- **Theme configuration** in `tailwind.config.js`
-- **API endpoints** in server actions
-- **UI components** in `/components` directory
-- **Database schema** in `prisma/schema.prisma`
-
-### Feature Flags
-```javascript
-// Enable/disable features
-const features = {
-  aiEnhancement: true,
-  pdfExport: true,
-  industryInsights: true,
-  interviewPrep: true,
-}
-```
-
-## 📱 Mobile Support
-
-### Responsive Design
-- Mobile-first approach with Tailwind CSS
-- Touch-friendly interfaces
-- Optimized layouts for all screen sizes
-- Progressive Web App (PWA) capabilities
-
-## 🧪 Testing
-
-### Test Setup
+### Frontend (Vercel)
 ```bash
-# Run tests
-npm run test
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run E2E tests
-npm run test:e2e
+# Build command (configured in package.json)
+npm run render-build
+# → runs: prisma generate && prisma db push && next build
 ```
+1. Push to GitHub
+2. Connect to Vercel
+3. Set all environment variables in Vercel dashboard
+4. Deploy
 
-### Testing Stack
-- **Jest** for unit testing
-- **React Testing Library** for component testing
-- **Playwright** for end-to-end testing
-- **MSW** for API mocking
+### Backend (Render / Railway / Fly.io)
+```bash
+# Start command
+cd backend && uvicorn main:app --host 0.0.0.0 --port 8000
+```
+Set `RAG_BACKEND_URL` environment variable on Vercel to point to your deployed backend URL.
+
+---
 
 ## 🛠️ Troubleshooting
 
-### Common Issues
-1. **Database Connection Errors**
-   - Verify DATABASE_URL format
-   - Check PostgreSQL service status
-   - Ensure network connectivity
+| Issue | Cause | Fix |
+|---|---|---|
+| `ModuleNotFoundError: langchain_community` | Missing Python dependency | `pip install langchain-community` |
+| `Server has closed the connection` on onboarding | Neon Postgres drops idle connections during slow Gemini calls | Already fixed — code re-queries DB after AI call |
+| Backend shows "offline" on AI Advisor page | Python server not running | Start with `uvicorn main:app --reload --port 8000` |
+| `PINECONE_API_KEY` error | Missing API key | Get free key from [pinecone.io](https://pinecone.io), add to `.env` |
+| Pinecone index creation fails | Wrong cloud/region | The code auto-creates `career-advisor` index on AWS us-east-1 |
+| Gemini API quota exceeded | Too many requests | Check quota at [ai.google.dev](https://ai.google.dev) |
 
-2. **Authentication Issues**
-   - Verify Clerk API keys
-   - Check domain configuration
-   - Review CORS settings
-
-3. **AI API Errors**
-   - Validate GEMINI_API_KEY
-   - Check API quota limits
-   - Review request formatting
-
-4. **Transaction Timeout Errors**
-   - AI generation may take 10-15 seconds
-   - System automatically retries failed operations
-   - Check network connectivity
-
-### Debug Mode
-```bash
-# Enable debug logging
-DEBUG=true npm run dev
-```
-
-## 📚 Documentation
-
-### API Documentation
-- Server actions documented with JSDoc
-- Database schema with detailed comments
-- Component props with TypeScript definitions
-
-### User Guides
-- Getting started tutorial
-- Feature walkthroughs
-- Best practices guide
-- Troubleshooting tips
+---
 
 ## 🤝 Contributing
 
-We welcome contributions to AI Career Catalyst! Here's how you can help:
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Commit changes: `git commit -m 'Add your feature'`
+4. Push: `git push origin feature/your-feature`
+5. Open a Pull Request
 
-### Development Process
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Make your changes** with proper testing
-4. **Commit your changes** (`git commit -m 'Add amazing feature'`)
-5. **Push to the branch** (`git push origin feature/amazing-feature`)
-6. **Open a Pull Request** with detailed description
-
-### Code Standards
-- Follow TypeScript best practices
-- Use Prettier for code formatting
-- Write meaningful commit messages
-- Add tests for new features
-- Update documentation as needed
-
-### Issues and Bugs
-- Use GitHub Issues for bug reports
-- Provide detailed reproduction steps
-- Include system information and error logs
-- Label issues appropriately
+---
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- [Next.js](https://nextjs.org/) for the amazing React framework
-- [Shadcn/ui](https://ui.shadcn.com/) for beautiful UI components
-- [Clerk](https://clerk.com/) for authentication
-- [Prisma](https://www.prisma.io/) for database management
-- [Google Gemini AI](https://ai.google.dev/) for AI capabilities
-
-## 📞 Support
-
-If you have any questions or need help, please:
-- Open an issue on GitHub
-- Check the documentation
-- Reach out to the maintainers
+- [Next.js](https://nextjs.org/) — React framework
+- [LangChain](https://langchain.com/) — LLM orchestration framework
+- [Pinecone](https://pinecone.io/) — Vector database
+- [Google Gemini](https://ai.google.dev/) — LLM & embeddings
+- [Clerk](https://clerk.com/) — Authentication
+- [Prisma](https://prisma.io/) — ORM
+- [shadcn/ui](https://ui.shadcn.com/) — UI components
+- [Inngest](https://inngest.com/) — Background jobs
 
 ---
 

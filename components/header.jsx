@@ -12,6 +12,7 @@ import {
   StarsIcon,
   Menu,
   X,
+  Bot,
 } from "lucide-react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
@@ -133,6 +134,17 @@ export default function Header() {
                     <div>
                       <div className="font-medium">Interview Prep</div>
                       <div className="text-xs text-muted-foreground">Practice with AI</div>
+                    </div>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="hover:!bg-pink-300/35 focus:!bg-pink-300/35 hover:!text-current focus:!text-current hover:shadow-xl hover:scale-105 transition-all duration-300">
+                  <Link href="/ai-advisor" className="flex items-center gap-3 px-4 py-3">
+                    <div className="w-8 h-8 rounded-lg bg-pink-300/20 flex items-center justify-center">
+                      <Bot className="h-4 w-4 text-pink-600" />
+                    </div>
+                    <div>
+                      <div className="font-medium">AI Advisor</div>
+                      <div className="text-xs text-muted-foreground">RAG-powered coaching</div>
                     </div>
                   </Link>
                 </DropdownMenuItem>
