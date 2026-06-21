@@ -259,7 +259,7 @@ class RAGEngine:
             llm=self.llm,
             retriever=self.vector_store.as_retriever(
                 search_type="similarity",
-                search_kwargs={"k": 5},
+                search_kwargs={"k": 5, "filter": {"user_id": user_id}},
             ),
             memory=memory,
             combine_docs_chain_kwargs={"prompt": CAREER_ADVISOR_PROMPT},
