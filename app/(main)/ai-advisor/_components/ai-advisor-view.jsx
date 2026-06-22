@@ -100,6 +100,7 @@ export default function AIAdvisorView() {
       const result = await apiCall("chat", {
         message: userMessage,
         session_id: sessionId,
+        user_id: sessionId,
       });
       setMessages((prev) => [
         ...prev,
@@ -141,7 +142,7 @@ export default function AIAdvisorView() {
     for (const file of files) {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("user_id", "default");
+      formData.append("user_id", sessionId);
 
       try {
         // Read the raw text content for resume auto-fill
@@ -189,8 +190,13 @@ export default function AIAdvisorView() {
 
   // --- Job Match handlers ---
   const analyzeMatch = async () => {
-    if (!resumeText.trim() || !jobDescription.trim()) {
-      toast.error("Please provide both resume text and job description");
+    const finalResumeText = resumeText.trim() || uploadedResumeText.trim() || (documents.length > 0 ? documents[0].summary : "");
+    if (!finalResumeText) {
+      toast.error("No resume text found. Please ensure you uploaded a resume.");
+      return;
+    }
+    if (!jobDescription.trim()) {
+      toast.error("Please provide a job description.");
       return;
     }
     setIsAnalyzing(true);
@@ -198,7 +204,7 @@ export default function AIAdvisorView() {
 
     try {
       const result = await apiCall("analyze", {
-        resume_text: resumeText,
+        resume_text: finalResumeText,
         job_description: jobDescription,
       });
       setMatchAnalysis(result.analysis);
@@ -273,7 +279,65 @@ export default function AIAdvisorView() {
         </Badge>
       </div>
 
-      {/* Main Tabs */}
+      {/* Main Content */}
+      {documents.length === 0 ? (
+        <Card className="glass-morphism border-2 border-white/20 relative overflow-hidden max-w-3xl mx-auto mt-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5" />
+          <CardHeader className="relative z-10 text-center">
+            <div className="mx-auto w-16 h-16 rounded-2xl gradient flex items-center justify-center mb-4">
+              <Upload className="h-8 w-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl gradient-text-secondary">
+              Start by Uploading Your Resume
+            </CardTitle>
+            <CardDescription className="text-base max-w-lg mx-auto">
+              Please upload your resume to access the AI Career Advisor and Job Match features. 
+              We'll analyze it so we can give you personalized advice.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="relative z-10">
+            <div
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-300 ${
+                dragActive
+                  ? "border-primary bg-primary/10 scale-[1.02]"
+                  : "border-white/20 hover:border-primary/50 hover:bg-primary/5"
+              }`}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                accept=".pdf,.txt,.md"
+                multiple
+                onChange={(e) => handleUpload(e.target.files)}
+              />
+              {isUploading ? (
+                <div className="space-y-3">
+                  <Loader2 className="h-10 w-10 mx-auto text-primary animate-spin" />
+                  <p className="text-sm font-medium">
+                    Processing & embedding document...
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div>
+                    <p className="font-semibold text-lg">
+                      Drop files here or click to browse
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Supports PDF, TXT, MD • Max 10MB per file
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
       <Tabs defaultValue="chat" className="space-y-6">
         <TabsList className="glass-morphism border border-white/20 p-1 h-auto flex-wrap">
           <TabsTrigger
@@ -283,19 +347,6 @@ export default function AIAdvisorView() {
             <MessageSquare className="h-4 w-4" />
             <span className="hidden sm:inline">AI Chat</span>
             <span className="sm:hidden">Chat</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="documents"
-            className="data-[state=active]:gradient data-[state=active]:text-white gap-2 px-4 py-2.5"
-          >
-            <Upload className="h-4 w-4" />
-            <span className="hidden sm:inline">Documents</span>
-            <span className="sm:hidden">Docs</span>
-            {documents.length > 0 && (
-              <Badge className="ml-1 h-5 min-w-[20px] text-xs gradient">
-                {documents.length}
-              </Badge>
-            )}
           </TabsTrigger>
           <TabsTrigger
             value="match"
@@ -472,242 +523,26 @@ export default function AIAdvisorView() {
           </Card>
         </TabsContent>
 
-        {/* ============================================================== */}
-        {/* Documents Tab                                                   */}
-        {/* ============================================================== */}
-        <TabsContent value="documents">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Upload zone */}
-            <Card className="glass-morphism border-2 border-white/20 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5" />
-              <CardHeader className="relative z-10">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500/10 to-teal-500/10">
-                    <Upload className="h-5 w-5 text-emerald-500" />
-                  </div>
-                  <CardTitle className="text-xl gradient-text-secondary">
-                    Upload Documents
-                  </CardTitle>
-                </div>
-                <CardDescription>
-                  Upload your resume, job descriptions, or any career documents. They'll be
-                  chunked, embedded, and stored in Pinecone for RAG retrieval.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="relative z-10">
-                <div
-                  onDrop={handleDrop}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`border-2 border-dashed rounded-xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-300 ${
-                    dragActive
-                      ? "border-primary bg-primary/10 scale-[1.02]"
-                      : "border-white/20 hover:border-primary/50 hover:bg-primary/5"
-                  }`}
-                >
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    className="hidden"
-                    accept=".pdf,.txt,.md"
-                    multiple
-                    onChange={(e) => handleUpload(e.target.files)}
-                  />
-                  {isUploading ? (
-                    <div className="space-y-3">
-                      <Loader2 className="h-10 w-10 mx-auto text-primary animate-spin" />
-                      <p className="text-sm font-medium">
-                        Processing & embedding document...
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      <div className="w-16 h-16 rounded-2xl gradient mx-auto flex items-center justify-center">
-                        <Upload className="h-8 w-8 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-lg">
-                          Drop files here or click to browse
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Supports PDF, TXT, MD • Max 10MB per file
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* RAG Pipeline visualization */}
-                <div className="mt-6 p-4 glass-card border border-white/10 rounded-xl">
-                  <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
-                    RAG Ingestion Pipeline
-                  </p>
-                  <div className="flex items-center justify-between text-xs gap-1">
-                    {[
-                      { icon: FileText, label: "Load" },
-                      { icon: null, label: "→" },
-                      { icon: Sparkles, label: "Split" },
-                      { icon: null, label: "→" },
-                      { icon: Brain, label: "Embed" },
-                      { icon: null, label: "→" },
-                      { icon: Target, label: "Pinecone" },
-                    ].map((step, i) =>
-                      step.icon ? (
-                        <div
-                          key={i}
-                          className="flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg bg-primary/5 border border-primary/10"
-                        >
-                          <step.icon className="h-3.5 w-3.5 text-primary" />
-                          <span className="font-medium">{step.label}</span>
-                        </div>
-                      ) : (
-                        <ArrowRight
-                          key={i}
-                          className="h-3 w-3 text-muted-foreground flex-shrink-0"
-                        />
-                      )
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Documents list */}
-            <Card className="glass-morphism border-2 border-white/20 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-indigo-500/5" />
-              <CardHeader className="relative z-10">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500/10 to-indigo-500/10">
-                    <FileText className="h-5 w-5 text-violet-500" />
-                  </div>
-                  <CardTitle className="text-xl gradient-text-secondary">
-                    Ingested Documents
-                  </CardTitle>
-                </div>
-                <CardDescription>
-                  Documents stored as vector embeddings in Pinecone, ready for
-                  retrieval during chat.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="relative z-10 space-y-3">
-                {documents.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <FileText className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">No documents uploaded yet</p>
-                    <p className="text-xs mt-1">
-                      Upload a resume or JD to get started
-                    </p>
-                  </div>
-                ) : (
-                  documents.map((doc) => (
-                    <div
-                      key={doc.id}
-                      className="glass-card border border-white/10 rounded-xl p-4 hover:border-primary/20 transition-all"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-3 flex-1">
-                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500/10 to-indigo-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <FileText className="h-5 w-5 text-violet-500" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="font-semibold text-sm truncate">
-                              {doc.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                              {doc.summary}
-                            </p>
-                            <div className="flex flex-wrap gap-1.5 mt-2">
-                              <Badge
-                                variant="outline"
-                                className="text-[10px] border-blue-500/30 bg-blue-500/5"
-                              >
-                                {doc.type}
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className="text-[10px] border-emerald-500/30 bg-emerald-500/5"
-                              >
-                                {doc.chunks} chunks
-                              </Badge>
-                              {doc.keyEntities?.slice(0, 3).map((e) => (
-                                <Badge
-                                  key={e}
-                                  variant="outline"
-                                  className="text-[10px] border-purple-500/30 bg-purple-500/5"
-                                >
-                                  {e}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                        <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
-                      </div>
-                    </div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
 
         {/* ============================================================== */}
         {/* Job Match Tab                                                   */}
         {/* ============================================================== */}
         <TabsContent value="match">
           <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Resume input */}
-              <Card className="glass-morphism border-2 border-white/20 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5" />
-                <CardHeader className="relative z-10">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/10 to-cyan-500/10">
-                      <FileText className="h-5 w-5 text-blue-500" />
-                    </div>
-                    <CardTitle className="text-lg">Your Resume</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="relative z-10">
-                  {!resumeText && uploadedResumeText && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mb-3 glass-card border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
-                      onClick={() => {
-                        setResumeText(uploadedResumeText);
-                        toast.success("Resume text loaded from uploaded document");
-                      }}
-                    >
-                      <FileText className="h-4 w-4 mr-2" />
-                      Use Uploaded Resume
-                    </Button>
-                  )}
-                  {!resumeText && documents.length > 0 && !uploadedResumeText && (
-                    <p className="text-xs text-muted-foreground mb-2">
-                      💡 Tip: Upload a file named with "resume" or "cv" for auto-fill, or paste text below.
-                    </p>
-                  )}
-                  <textarea
-                    value={resumeText}
-                    onChange={(e) => setResumeText(e.target.value)}
-                    placeholder="Paste your resume text here, or upload a resume in the Documents tab for auto-fill..."
-                    className="w-full h-64 bg-background/50 border border-white/20 rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-muted-foreground/50"
-                  />
-                </CardContent>
-              </Card>
-
+            <div className="max-w-3xl mx-auto">
               {/* JD input */}
               <Card className="glass-morphism border-2 border-white/20 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-amber-500/5" />
                 <CardHeader className="relative z-10">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-lg bg-gradient-to-br from-orange-500/10 to-amber-500/10">
                       <Target className="h-5 w-5 text-orange-500" />
                     </div>
-                    <CardTitle className="text-lg">Job Description</CardTitle>
+                    <CardTitle className="text-xl">Job Description</CardTitle>
                   </div>
+                  <CardDescription className="text-base">
+                    Paste the job description below. We will analyze it against your uploaded resume.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="relative z-10">
                   <textarea
@@ -725,7 +560,7 @@ export default function AIAdvisorView() {
               <Button
                 onClick={analyzeMatch}
                 disabled={
-                  isAnalyzing || !resumeText.trim() || !jobDescription.trim()
+                  isAnalyzing || !jobDescription.trim()
                 }
                 className="gradient px-8 py-6 text-lg font-bold shadow-2xl hover:scale-105 transition-all"
               >
@@ -935,6 +770,7 @@ export default function AIAdvisorView() {
           </div>
         </TabsContent>
       </Tabs>
+      )}
     </div>
   );
 }
